@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
 import api from '../../services/api';
@@ -73,6 +74,11 @@ export default class User extends Component {
     this.load();
   };
 
+  handleNavigate = repository => {
+    const { navigation } = this.props;
+    navigation.navigate('Repository', { repository });
+  };
+
   render() {
     const { navigation } = this.props;
     const { stars, loading, refreshing } = this.state;
@@ -98,13 +104,19 @@ export default class User extends Component {
             data={stars}
             keyExtractor={star => String(star.id)}
             renderItem={({ item }) => (
-              <Starred>
-                <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
-                <Info>
-                  <Title>{item.name}</Title>
-                  <Author>{item.owner.login}</Author>
-                </Info>
-              </Starred>
+              <TouchableOpacity
+                onPress={() => {
+                  this.handleNavigate(item);
+                }}
+              >
+                <Starred>
+                  <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
+                  <Info>
+                    <Title>{item.name}</Title>
+                    <Author>{item.owner.login}</Author>
+                  </Info>
+                </Starred>
+              </TouchableOpacity>
             )}
           />
         )}
@@ -116,5 +128,6 @@ export default class User extends Component {
 User.propTypes = {
   navigation: PropTypes.shape({
     getParam: PropTypes.func,
+    navigate: PropTypes.func,
   }).isRequired,
 };
